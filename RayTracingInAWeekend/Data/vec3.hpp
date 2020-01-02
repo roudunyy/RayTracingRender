@@ -106,5 +106,7 @@ float dot(const vec3 &v1, const vec3 &v2);
 vec3 cross(const vec3 &v1, const vec3 &v2);
 std::ostream& operator<<(std::ostream &os, const vec3 &t);
 vec3 unit_vector(const vec3& v);
+vec3 reflect(const vec3& v, const vec3& n);
+bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted);
 
 #endif /* vec3_hpp */

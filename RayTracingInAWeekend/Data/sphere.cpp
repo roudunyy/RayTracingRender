@@ -21,6 +21,7 @@ bool sphere::hit(const ray &r, float t_min, float t_max, hit_record &result) con
             result.t = temp;
             result.p = r.point_at_param(result.t);
             result.normal = (result.p - center) / radius;
+            result.mat_ptr = m_mat;
             return true;
         }
         temp = (-b + sqrt(b*b-a*c))/a;
@@ -28,6 +29,7 @@ bool sphere::hit(const ray &r, float t_min, float t_max, hit_record &result) con
             result.t = temp;
             result.p = r.point_at_param(result.t);
             result.normal = (result.p - center) / radius;
+                      result.mat_ptr = m_mat;
             return true;
         }
     }

@@ -11,6 +11,10 @@
 #include "hitable_list.hpp"
 #include "sphere.hpp"
 #include "camera.hpp"
+#include "global.hpp"
+#include "diffuse.hpp"
+#include "metal.hpp"
+#include "dielectric.hpp"
 
 float hit_sphere(const vec3 &center, float radius, const ray& r) {
     vec3 oc = r.origin() - center;
@@ -26,38 +30,58 @@ float hit_sphere(const vec3 &center, float radius, const ray& r) {
 
 }
 
-vec3 random_in_unit_sphere() {
-    vec3 p;
-    do {
-        p = 2.0 * vec3(drand48(), drand48(), drand48()) - vec3(1, 1, 1);
-        
-    } while (p.square_length() >= 1.0);
-    return p;
-}
-
-vec3 color(const ray& r, hitable *obj) {
+vec3 color(const ray& r, hitable *obj, int depth) {
     hit_record rec;
-    if (obj->hit(r, 0, MAXFLOAT, rec)) {
-//        return 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1, rec.normal.z()+1);
-        vec3 target = rec.p + rec.normal + random_in_unit_sphere();
-        return 0.5 * color(ray(rec.p, target - rec.p), obj);
-    }
+    if (obj->hit(r, 0.001, MAXFLOAT, rec)) {
+        ray scattered;
+        vec3 attenuation;
+        //depth
+        if (depth < 10 && rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
+            return attenuation * color(scattered, obj, depth+1);
+        } else {
+            return vec3(0, 0, 0);
+        }
 
-    vec3 unit_dir = unit_vector(r.direction());
-    float t = 0.5 * (unit_dir.y() + 1.0);
-    return (1.0-t)*vec3(1, 1, 1) + t*vec3(0.5, 0.7, 1.0);
+    } else {
+        vec3 unit_dir = unit_vector(r.direction());
+        float t = 0.5 * (unit_dir.y() + 1.0);
+        return (1.0-t)*vec3(1, 1, 1) + t*vec3(0.5, 0.7, 1.0);
+    }
 }
 
+hitable *random_scene()
+{
+    int n = 500;
+    hitable **list = new hitable*[n+1];
+    list[0] = new sphere(vec3(0, -1000, 0), 1000, new diffuse(vec3(0.5, 0.5, 0.5)));
+    int i = 1;
+    for (int a = -11; a < 11; a++) {
+        for (int b = -11; b < 11; b++) {
+            float choose_mat = drand48();
+            vec3 center(a + 0.9 * drand48(), 0.2, 0.9 * drand48());
+            if ((center - vec3(4, 0.2, 0)).length() > 0.9) {
+                if (choose_mat < 0.8) {
+                    list[i++] = new sphere(center, 0.2, new diffuse(vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())));
+                }
+                else if (choose_mat < 0.95) {
+                    list[i++] = new sphere(center, 0.2, new metal(vec3(0.5*(1+drand48()), 0.5*(1+drand48()), 0.5*(1+drand48())), 0.5));
+                }
+                else
+                {
+                    list[i++] = new sphere(center, 0.2, new dielectric(1.5));
+                }
+            }
+        }
+    }
+    return new hitable_list(list, i);
+}
 
 int main(int argc, const char * argv[]) {
      int nx = 200;
      int ny = 300;
     int ns = 100;
     
-    hitable *list[2];
-    list[0] = new sphere(vec3(0, 0, -1), 0.5);
-    list[1] = new sphere(vec3(0, -100.5, -1), 100);
-    hitable *objs = new hitable_list(list, 2);
+    hitable *list = random_scene();
 
     vec3 **data;
     data = new vec3 *[nx];
@@ -65,7 +89,7 @@ int main(int argc, const char * argv[]) {
         data[index] = new vec3[ny];
     }
     
-    camera cam;
+    camera cam(vec3(-2, 2, 1), vec3(0, 0, -1), vec3(0, 1, 0), 90, (float)nx/(float)ny);
     std::cout << "P3\n" << nx << " " << ny << "\n255\n";
     for (int j = ny - 1; j >= 0; j--) {
         for (int i = 0; i<nx; i++) {
@@ -76,7 +100,7 @@ int main(int argc, const char * argv[]) {
                 float v = (float)(j+drand48())/(float)(ny);
                 ray r = cam.get_ray(u, v);
 
-                col += color(r, objs);
+                col += color(r, list, 0);
             }
             col /= ns;
             //gamma correct
