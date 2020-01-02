@@ -7,8 +7,10 @@
 //
 
 #include <iostream>
-#include "ray.hpp"
 #include "PPMUtil.hpp"
+#include "hitable_list.hpp"
+#include "sphere.hpp"
+#include "camera.hpp"
 
 float hit_sphere(const vec3 &center, float radius, const ray& r) {
     vec3 oc = r.origin() - center;
@@ -24,14 +26,14 @@ float hit_sphere(const vec3 &center, float radius, const ray& r) {
 
 }
 
-vec3 color(const ray& r) {
-    float t = hit_sphere(vec3(0, 0, -1), 0.5, r);
-    if (t > 0) {
-        vec3 N = unit_vector(r.point_at_param(t)- vec3(0,0,-1));
-        return 0.5*vec3(N.x()+1, N.y()+1, N.z()+1);
+vec3 color(const ray& r, hitable *obj) {
+    hit_record rec;
+    if (obj->hit(r, 0, MAXFLOAT, rec)) {
+        return 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1, rec.normal.z()+1);
     }
+
     vec3 unit_dir = unit_vector(r.direction());
-    t = 0.5 * (unit_dir.y() + 1.0);
+    float t = 0.5 * (unit_dir.y() + 1.0);
     return (1.0-t)*vec3(1, 1, 1) + t*vec3(0.5, 0.7, 1.0);
 }
 
@@ -39,24 +41,33 @@ vec3 color(const ray& r) {
 int main(int argc, const char * argv[]) {
      int nx = 200;
      int ny = 300;
+    int ns = 100;
     
-    vec3 lower_left(-2, -3, -1);
-    vec3 horizontal(4, 0, 0);
-    vec3 vertical(0, 6, 0);
-    vec3 orig(0, 0, 0);
+    hitable *list[2];
+    list[0] = new sphere(vec3(0, 0, -1), 0.5);
+    list[1] = new sphere(vec3(0, -100.5, -1), 100);
+    hitable *objs = new hitable_list(list, 2);
+
     vec3 **data;
     data = new vec3 *[nx];
     for (int index = 0; index < ny; index++) {
         data[index] = new vec3[ny];
     }
+    
+    camera cam;
     std::cout << "P3\n" << nx << " " << ny << "\n255\n";
     for (int j = ny - 1; j >= 0; j--) {
         for (int i = 0; i<nx; i++) {
-            float u = (float)i/(float)(nx);
-            float v = (float)j/(float)(ny);
-            ray r(orig, lower_left + u*horizontal + v*vertical);
-            vec3 col = color(r);
-            
+            vec3 col(0, 0, 0);
+            //anti-aliasing
+            for (int s = 0; s < ns; s++) {
+                float u = (float)(i+drand48())/(float)(nx);
+                float v = (float)(j+drand48())/(float)(ny);
+                ray r = cam.get_ray(u, v);
+
+                col += color(r, objs);
+            }
+
             int ir = int(255*col.x());
             int ig = int(255*col.y());
             int ib = int(255*col.z());

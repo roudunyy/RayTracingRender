@@ -13,6 +13,8 @@
 		4C55F13B23BB35A1009F2834 /* hitable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C55F13923BB35A1009F2834 /* hitable.cpp */; };
 		4C55F13E23BB36E5009F2834 /* sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C55F13C23BB36E5009F2834 /* sphere.cpp */; };
 		4C7B79DF23A8CA8700F7868E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C7B79DE23A8CA8700F7868E /* main.cpp */; };
+		4CD1112323BD9B9D000FE1B3 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CD1112123BD9B9D000FE1B3 /* camera.cpp */; };
+		4CE8442B23BD8EB200FCE1BE /* hitable_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CE8442923BD8EB200FCE1BE /* hitable_list.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +42,10 @@
 		4C55F13D23BB36E5009F2834 /* sphere.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sphere.hpp; sourceTree = "<group>"; };
 		4C7B79DB23A8CA8700F7868E /* RayTracingInAWeekend */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RayTracingInAWeekend; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7B79DE23A8CA8700F7868E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		4CD1112123BD9B9D000FE1B3 /* camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
+		4CD1112223BD9B9D000FE1B3 /* camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
+		4CE8442923BD8EB200FCE1BE /* hitable_list.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = hitable_list.cpp; sourceTree = "<group>"; };
+		4CE8442A23BD8EB200FCE1BE /* hitable_list.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = hitable_list.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +79,10 @@
 				4C55F13A23BB35A1009F2834 /* hitable.hpp */,
 				4C55F13C23BB36E5009F2834 /* sphere.cpp */,
 				4C55F13D23BB36E5009F2834 /* sphere.hpp */,
+				4CE8442923BD8EB200FCE1BE /* hitable_list.cpp */,
+				4CE8442A23BD8EB200FCE1BE /* hitable_list.hpp */,
+				4CD1112123BD9B9D000FE1B3 /* camera.cpp */,
+				4CD1112223BD9B9D000FE1B3 /* camera.hpp */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -163,7 +173,9 @@
 				4C55F13B23BB35A1009F2834 /* hitable.cpp in Sources */,
 				4C55F13823BB2C51009F2834 /* ray.cpp in Sources */,
 				4C7B79DF23A8CA8700F7868E /* main.cpp in Sources */,
+				4CD1112323BD9B9D000FE1B3 /* camera.cpp in Sources */,
 				4C55F13123BB161D009F2834 /* PPMUtil.cpp in Sources */,
+				4CE8442B23BD8EB200FCE1BE /* hitable_list.cpp in Sources */,
 				4C55F13523BB1A64009F2834 /* vec3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
