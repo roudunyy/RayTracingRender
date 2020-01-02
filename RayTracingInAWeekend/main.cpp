@@ -26,10 +26,21 @@ float hit_sphere(const vec3 &center, float radius, const ray& r) {
 
 }
 
+vec3 random_in_unit_sphere() {
+    vec3 p;
+    do {
+        p = 2.0 * vec3(drand48(), drand48(), drand48()) - vec3(1, 1, 1);
+        
+    } while (p.square_length() >= 1.0);
+    return p;
+}
+
 vec3 color(const ray& r, hitable *obj) {
     hit_record rec;
     if (obj->hit(r, 0, MAXFLOAT, rec)) {
-        return 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1, rec.normal.z()+1);
+//        return 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1, rec.normal.z()+1);
+        vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+        return 0.5 * color(ray(rec.p, target - rec.p), obj);
     }
 
     vec3 unit_dir = unit_vector(r.direction());
@@ -67,7 +78,10 @@ int main(int argc, const char * argv[]) {
 
                 col += color(r, objs);
             }
-
+            col /= ns;
+            //gamma correct
+            col = vec3(sqrt(col.x()), sqrt(col.y()), sqrt(col.z()));
+            
             int ir = int(255*col.x());
             int ig = int(255*col.y());
             int ib = int(255*col.z());
