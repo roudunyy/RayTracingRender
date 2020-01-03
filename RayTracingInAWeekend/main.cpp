@@ -58,7 +58,7 @@ hitable *random_scene()
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
             float choose_mat = drand48();
-            vec3 center(a + 0.9 * drand48(), 0.2, 0.9 * drand48());
+            vec3 center(a + 0.9 * drand48(), 0.2, b+0.9 * drand48());
             if ((center - vec3(4, 0.2, 0)).length() > 0.9) {
                 if (choose_mat < 0.8) {
                     list[i++] = new sphere(center, 0.2, new diffuse(vec3(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())));
@@ -73,6 +73,9 @@ hitable *random_scene()
             }
         }
     }
+     list[i++] = new sphere(vec3(0, 1, 0), 1.0, new dielectric(1.5));
+     list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new diffuse(vec3(0.4, 0.2, 0.1)));
+     list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
     return new hitable_list(list, i);
 }
 
@@ -110,7 +113,9 @@ int main(int argc, const char * argv[]) {
             int ig = int(255*col.y());
             int ib = int(255*col.z());
             data[i][j] = vec3(ir, ig, ib);
+          
         }
+        std::cout << "processing  j = " << j << "\n";
     }
 
     PPMUtil::WritePPMFile(nx, ny, data);
